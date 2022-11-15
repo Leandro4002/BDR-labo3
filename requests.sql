@@ -82,3 +82,35 @@ WHERE a.first_name LIKE 'K%' OR a.last_name LIKE 'D%' AND a.actor_id IN (
     );
 
 -- END Exercice 6
+
+-- BEGIN Exercice 8
+
+-- (b)
+SELECT
+    customer_id AS id,
+    last_name AS nom,
+    first_name AS prenom
+FROM pagila.customer cu
+WHERE cu.address_id IN (
+    SELECT
+        a.address_id
+    FROM pagila.address a
+    WHERE a.city_id IN (
+        SELECT
+            ci.city_id
+        FROM pagila.city ci
+        WHERE ci.country_id = (
+            SELECT
+                co.country_id
+            FROM pagila.country co
+            WHERE country='Spain'
+            )
+        )
+    )
+ORDER BY last_name;
+
+-- (c)
+
+-- INNER JOOOOOOIN
+
+-- END Exercice 8
