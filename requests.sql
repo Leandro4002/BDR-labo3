@@ -85,6 +85,22 @@ WHERE a.first_name LIKE 'K%' OR a.last_name LIKE 'D%' AND a.actor_id IN (
 
 -- BEGIN Exercice 8
 
+-- (a)
+
+SELECT
+    cu.customer_id AS id,
+    cu.last_name AS nom,
+    cu.first_name AS prenom
+FROM pagila.customer cu
+INNER JOIN address a on cu.address_id = a.address_id
+INNER JOIN city c on a.city_id = c.city_id
+INNER JOIN country co on co.country_id = c.country_id
+WHERE
+    co.country = 'Spain'
+    AND EXISTS
+(SELECT r.customer_id FROM rental r WHERE cu.customer_id = r.customer_id AND r.return_date IS NULL)
+ORDER BY last_name;
+
 -- (b)
 SELECT
     customer_id AS id,
@@ -107,10 +123,28 @@ WHERE cu.address_id IN (
             )
         )
     )
+AND cu.customer_id IN (
+    SELECT
+        customer_id
+    FROM rental r
+    WHERE r.return_date IS NULL
+    )
 ORDER BY last_name;
 
 -- (c)
 
--- INNER JOOOOOOIN
+SELECT
+    cu.customer_id AS id,
+    cu.last_name AS nom,
+    cu.first_name AS prenom
+FROM pagila.customer cu
+INNER JOIN address a on cu.address_id = a.address_id
+INNER JOIN city c on a.city_id = c.city_id
+INNER JOIN country co on co.country_id = c.country_id
+INNER JOIN rental r on r.customer_id = cu.customer_id
+WHERE
+    co.country = 'Spain'
+    AND r.return_date IS NULL
+ORDER BY last_name;
 
 -- END Exercice 8
