@@ -92,12 +92,21 @@ SELECT
     cu.last_name AS nom,
     cu.first_name AS prenom
 FROM pagila.customer cu
-INNER JOIN address a on cu.address_id = a.address_id
-INNER JOIN city c on a.city_id = c.city_id
-INNER JOIN country co on co.country_id = c.country_id
-WHERE
-    co.country = 'Spain'
-    AND EXISTS
+WHERE EXISTS
+    (
+    SELECT a.address_id
+    FROM address a
+    WHERE a.address_id = cu.address_id AND EXISTS (
+        SELECT c.city_id
+        FROM city c
+        WHERE c.city_id = a.city_id AND EXISTS (
+            SELECT co.country_id
+            FROM country co
+            WHERE co.country_id = c.country_id AND co.country = 'Spain'
+            )
+        )
+)
+AND EXISTS
 (SELECT r.customer_id FROM rental r WHERE cu.customer_id = r.customer_id AND r.return_date IS NULL)
 ORDER BY last_name;
 
