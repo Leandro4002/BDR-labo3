@@ -51,6 +51,24 @@ ORDER BY first_name;
 
 -- BEGIN Exercice 5
 
+SELECT
+    c1.first_name AS prenom_1,
+    c1.last_name AS nom_1,
+    c2.first_name AS prenom_2,
+    c2.last_name AS nom_2
+FROM film f
+INNER JOIN inventory i
+    ON i.film_id = f.film_id
+INNER JOIN rental r1
+    ON r1.inventory_id = i.inventory_id
+INNER JOIN rental r2
+    ON r2.inventory_id = i.inventory_id
+INNER JOIN customer c1
+    ON r1.customer_id = c1.customer_id
+INNER JOIN customer c2
+    ON r2.customer_id = c2.customer_id
+WHERE
+    c1.customer_id != c2.customer_id;
 
 -- END Exercice 5
 
@@ -82,6 +100,46 @@ WHERE a.first_name LIKE 'K%' OR a.last_name LIKE 'D%' AND a.actor_id IN (
     );
 
 -- END Exercice 6
+
+-- BEGIN Exercice 7
+
+-- Version 1
+
+SELECT
+    film_id AS id,
+    title AS titre,
+    rental_rate / rental_duration AS prix_location_par_jour
+FROM film f
+WHERE
+    rental_rate / rental_duration <= 1
+    AND film_id NOT IN (
+        SELECT
+            film_id
+        FROM rental
+        INNER JOIN inventory i
+            ON i.inventory_id = rental.inventory_id
+    );
+
+-- Version 2
+
+SELECT
+    film_id AS id,
+    title AS titre,
+    rental_rate / rental_duration AS prix_location_par_jour
+FROM film f
+WHERE
+    rental_rate / rental_duration <= 1
+    AND NOT EXISTS (
+        SELECT
+            film_id
+        FROM rental
+        INNER JOIN inventory i
+            ON i.inventory_id = rental.inventory_id
+        WHERE
+            i.film_id = f.film_id
+    );
+
+-- END Exercice 7
 
 -- BEGIN Exercice 8
 
@@ -157,3 +215,51 @@ WHERE
 ORDER BY last_name;
 
 -- END Exercice 8
+
+-- BEGIN Exercice 9
+
+SELECT
+    c.customer_id,
+    c.first_name AS prenom,
+    c.last_name AS nom
+FROM customer c
+WHERE
+    ( -- Compte le nombre de film différent avec Emily Dee que le customer a loué
+        SELECT DISTINCT
+            COUNT(DISTINCT f.film_id)
+        FROM rental r
+        INNER JOIN inventory i
+            ON i.inventory_id = r.inventory_id
+         INNER JOIN film f
+            ON f.film_id = i.film_id
+         INNER JOIN film_actor fa
+            ON fa.film_id = f.film_id
+         INNER JOIN actor a
+            ON fa.actor_id = a.actor_id
+         WHERE
+            r.customer_id = c.customer_id
+            AND a.first_name = 'EMILY' AND a.last_name = 'DEE'
+    )
+    =
+    ( -- Compte le nombre total de film avec Emily Dee
+        SELECT
+            COUNT(*)
+        FROM film f
+        INNER JOIN film_actor fa
+            ON fa.film_id = f.film_id
+        INNER JOIN actor a
+            ON fa.actor_id = a.actor_id
+        WHERE
+            a.first_name = 'EMILY' AND a.last_name = 'DEE'
+    );
+
+
+-- END Exercice 9
+
+-- BEGIN Exercice 11
+
+
+
+-- END Exercice 11
+
+-- BEGIN
