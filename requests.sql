@@ -225,7 +225,7 @@ SELECT
 FROM customer c
 WHERE
     ( -- Compte le nombre de film différent avec Emily Dee que le customer a loué
-        SELECT DISTINCT
+        SELECT
             COUNT(DISTINCT f.film_id)
         FROM rental r
         INNER JOIN inventory i
