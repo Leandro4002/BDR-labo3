@@ -1,7 +1,6 @@
 SET search_path = pagila;
 
 -- BEGIN Exercice 01
-
 SELECT
     customer_id,
     last_name AS nom,
@@ -10,11 +9,10 @@ FROM customer
 WHERE first_name = 'PHYLLIS'
     AND store_id = 1
 ORDER BY customer_id DESC;
-
 -- END Exercice 01
 
--- BEGIN Exercice 02
 
+-- BEGIN Exercice 02
 SELECT
     title AS titre,
     release_year AS annee_sortie
@@ -23,11 +21,10 @@ WHERE rating = 'R'
     AND length < 60
     AND replacement_cost=12.99
 ORDER BY title;
-
 -- END Exercice 02
 
--- BEGIN Exercice 03
 
+-- BEGIN Exercice 03
 SELECT
     co.country,
     ci.city,
@@ -43,11 +40,10 @@ WHERE co.country = 'France'
 ORDER BY co.country,
     ci.city,
     a.postal_code;
-
 -- END Exercice 03
 
--- BEGIN Exercice 04
 
+-- BEGIN Exercice 04
 SELECT
     customer_id,
     first_name AS prenom,
@@ -59,11 +55,10 @@ WHERE c.active = true
     AND a.city_id = 171
     AND c.store_id = 1
 ORDER BY first_name;
-
 -- END Exercice 04
 
--- BEGIN Exercice 05
 
+-- BEGIN Exercice 05
 SELECT
     c1.first_name AS prenom_1,
     c1.last_name AS nom_1,
@@ -82,11 +77,10 @@ INNER JOIN customer c2
     ON r2.customer_id = c2.customer_id
 WHERE
     c1.customer_id != c2.customer_id;
-
 -- END Exercice 05
 
--- BEGIN Exercice 06
 
+-- BEGIN Exercice 06
 SELECT DISTINCT
     a.last_name AS nom,
     a.first_name AS prenom
@@ -112,13 +106,10 @@ WHERE a.first_name LIKE 'K%' OR a.last_name LIKE 'D%' AND a.actor_id IN (
             )
         )
     );
-
 -- END Exercice 06
 
--- BEGIN Exercice 07
 
--- Version 1
-
+-- BEGIN Exercice 07a
 SELECT
     film_id AS id,
     title AS titre,
@@ -133,9 +124,10 @@ WHERE
         INNER JOIN inventory i
             ON i.inventory_id = rental.inventory_id
     );
+-- END Exercice 07a
 
--- Version 2
 
+-- BEGIN Exercice 07b
 SELECT
     film_id AS id,
     title AS titre,
@@ -152,13 +144,10 @@ WHERE
         WHERE
             i.film_id = f.film_id
     );
+-- END Exercice 07b
 
--- END Exercice 07
 
--- BEGIN Exercice 08
-
--- (a)
-
+-- BEGIN Exercice 08a
 SELECT
     cu.customer_id AS id,
     cu.last_name AS nom,
@@ -181,8 +170,10 @@ WHERE EXISTS
     AND EXISTS
     (SELECT r.customer_id FROM rental r WHERE cu.customer_id = r.customer_id AND r.return_date IS NULL)
     ORDER BY last_name;
+-- END Exercice 08a
 
--- (b)
+
+-- BEGIN Exercice 08b
 SELECT
     customer_id AS id,
     last_name AS nom,
@@ -211,9 +202,10 @@ AND cu.customer_id IN (
     WHERE r.return_date IS NULL
     )
 ORDER BY last_name;
+-- END Exercice 08b
 
--- (c)
 
+-- BEGIN Exercice 08c
 SELECT
     cu.customer_id AS id,
     cu.last_name AS nom,
@@ -227,11 +219,10 @@ WHERE
     co.country = 'Spain'
     AND r.return_date IS NULL
 ORDER BY last_name;
+-- END Exercice 08c
 
--- END Exercice 08
 
--- BEGIN Exercice 09
-
+-- BEGIN Exercice 09 (Bonus)
 SELECT
     c.customer_id,
     c.first_name AS prenom,
@@ -244,13 +235,13 @@ WHERE
         FROM rental r
         INNER JOIN inventory i
             ON i.inventory_id = r.inventory_id
-         INNER JOIN film f
+        INNER JOIN film f
             ON f.film_id = i.film_id
-         INNER JOIN film_actor fa
+        INNER JOIN film_actor fa
             ON fa.film_id = f.film_id
-         INNER JOIN actor a
+        INNER JOIN actor a
             ON fa.actor_id = a.actor_id
-         WHERE
+        WHERE
             r.customer_id = c.customer_id
             AND a.first_name = 'EMILY' AND a.last_name = 'DEE'
     )
@@ -266,12 +257,10 @@ WHERE
         WHERE
             a.first_name = 'EMILY' AND a.last_name = 'DEE'
     );
+-- END Exercice 09 (Bonus)
 
-
--- END Exercice 09
 
 -- BEGIN Exercice 10
-
 -- TODO Lire la question wallah
 SELECT
     f.title AS titre,
@@ -281,11 +270,10 @@ INNER JOIN film_actor fa on f.film_id = fa.film_id
 GROUP BY f.title
 HAVING COUNT(fa.actor_id) > 5
 ORDER BY nb_acteurs DESC;
-
 -- END Exercice 10
 
--- BEGIN Exercice 11
 
+-- BEGIN Exercice 11
 SELECT
     c.category_id AS id,
     c.name AS nom,
@@ -296,24 +284,20 @@ INNER JOIN film_category fc
 GROUP BY c.category_id
 HAVING COUNT(fc.film_id) > 65
 ORDER BY COUNT(fc.film_id);
-
 -- END Exercice 11
 
--- BEGIN Exercice 12
 
+-- BEGIN Exercice 12
 SELECT
     f.film_id AS id,
     f.title AS titre,
     f.length AS duree
 FROM film f
 WHERE f.length <= ALL (SELECT length FROM film);
-
 -- END Exercice 12
 
--- BEGIN Exercice 13
 
--- Version 1 : Avec IN
-
+-- BEGIN Exercice 13a
 SELECT
     f.film_id as id,
     f.title as titre
@@ -321,16 +305,17 @@ FROM film f
 INNER JOIN film_actor fa
     ON f.film_id = fa.film_id
 WHERE fa.actor_id IN
-      (
+    (
         SELECT
             fa2.actor_id
         FROM film_actor fa2
         GROUP BY fa2.actor_id
         HAVING COUNT(fa2.actor_id) > 40
     );
+-- END Exercice 13a
 
--- Version 2 : Sans IN
 
+-- BEGIN Exercice 13b
 SELECT
     f.film_id as id,
     f.title as titre
@@ -345,19 +330,17 @@ INNER JOIN (
         HAVING COUNT(fa2.actor_id) > 40
     ) as fa3
     ON fa3.actor_id = fa.actor_id;
+-- END Exercice 13b
 
--- END Exercice 13
 
 -- BEGIN Exercice 14
-
 SELECT
     SUM(f.length) / 60 / 8 AS nb_jours
 FROM film f;
-
 -- END Exercice 14
 
--- BEGIN Exercice 15
 
+-- BEGIN Exercice 15
 SELECT
     c.customer_id as id,
     c.last_name as nom,
@@ -382,44 +365,42 @@ WHERE
 GROUP BY c.customer_id, c.last_name, c.email, co.country
 HAVING AVG(p.amount) > 3.0
 ORDER BY co.country, c.last_name;
-
 -- END Exercice 15
 
--- BEGIN Exercice 16
 
--- (a)
+-- BEGIN Exercice 16a
 SELECT
     COUNT(*)
 FROM payment p
 WHERE p.amount <= 9;
 -- Résultat: 15678
+-- END Exercice 16a
 
--- (b)
+
+-- BEGIN Exercice 16b
 DELETE FROM payment p WHERE p.amount <= 9;
+-- END Exercice 16b
 
--- (c)
+-- BEGIN Exercice 16c
 SELECT
     COUNT(*)
 FROM payment p
 WHERE p.amount <= 9;
 -- Résultat: 0
+-- END Exercice 16c
 
--- END Exercice 16
 
 -- BEGIN Exercice 17
-
 UPDATE payment
 SET
     amount = amount * 1.5,
     payment_date = NOW()
 WHERE
     amount > 4;
-
 -- END Exercice 17
 
--- BEGIN Exercice 18
 
--- (a)
+-- BEGIN Exercice 18
 -- Ajout de la ville du client
 INSERT INTO city (city, country_id, last_update)
 VALUES ('Nyon', (SELECT country_id FROM country WHERE country = 'Switzerland'), CURRENT_DATE);
@@ -431,12 +412,9 @@ VALUES ('Rue du Centre', NULL, 'Vaud', (SELECT city_id FROM city WHERE city = 'N
 -- Ajout du client
 INSERT INTO customer (store_id, first_name, last_name, email, address_id, active, create_date, last_update)
 VALUES (1, 'Guillaume', 'Ransome', 'gr@bluewin.ch', (SELECT MAX(address_id) FROM address), true, CURRENT_DATE, CURRENT_DATE);
-
--- (c)
-SELECT MAX(city_id) FROM city;
-SELECT MAX(address_id) FROM address;
-
--- (d)
-SELECT * FROM customer WHERE first_name = 'Guillaume' AND last_name = 'Ransome';
-
 -- END Exercice 18
+
+
+-- BEGIN Exercice 18d
+SELECT * FROM customer WHERE first_name = 'Guillaume' AND last_name = 'Ransome';
+-- END Exercice 18d
