@@ -271,11 +271,17 @@ ORDER BY f.title;
 
 -- BEGIN Exercice 11
 
-
+SELECT
+    c.category_id as id,
+    c.name as nom,
+    COUNT(fc.film_id) as nb_films
+FROM category c
+INNER JOIN film_category fc
+    ON c.category_id = fc.category_id
+GROUP BY c.category_id
+HAVING COUNT(fc.film_id) > 65;
 
 -- END Exercice 11
-
--- BEGIN
 
 -- BEGIN Exercice 12
 
@@ -285,6 +291,12 @@ FROM film f
 WHERE f.length <= ALL (SELECT length FROM film);
 
 -- END Exercice 12
+
+-- BEGIN Exercice 13
+
+
+
+-- END Exercice 13
 
 -- BEGIN Exercice 14
 
