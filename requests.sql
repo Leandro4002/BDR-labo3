@@ -312,7 +312,39 @@ WHERE f.length <= ALL (SELECT length FROM film);
 
 -- BEGIN Exercice 13
 
+-- Version 1 : Avec IN
 
+SELECT
+    f.film_id as id,
+    f.title as titre
+FROM film f
+INNER JOIN film_actor fa
+    ON f.film_id = fa.film_id
+WHERE fa.actor_id IN
+      (
+        SELECT
+            fa2.actor_id
+        FROM film_actor fa2
+        GROUP BY fa2.actor_id
+        HAVING COUNT(fa2.actor_id) > 40
+    );
+
+-- Version 2 : Sans IN
+
+SELECT
+    f.film_id as id,
+    f.title as titre
+FROM film f
+INNER JOIN film_actor fa
+    ON fa.film_id = f.film_id
+INNER JOIN (
+        SELECT
+            fa2.actor_id
+        FROM film_actor fa2
+        GROUP BY fa2.actor_id
+        HAVING COUNT(fa2.actor_id) > 40
+    ) as fa3
+    ON fa3.actor_id = fa.actor_id;
 
 -- END Exercice 13
 
@@ -323,6 +355,35 @@ SELECT
 FROM film f;
 
 -- END Exercice 14
+
+-- BEGIN Exercice 15
+
+SELECT
+    c.customer_id as id,
+    c.last_name as nom,
+    c.email,
+    co.country as pays,
+    COUNT(r.rental_id) as nb_locations,
+    SUM(p.amount) as depense_total,
+    AVG(p.amount) as depense_moyenne
+FROM customer c
+INNER JOIN address a
+    ON c.address_id = a.address_id
+INNER JOIN city ci
+    ON a.city_id = ci.city_id
+INNER JOIN country co
+    ON ci.country_id = co.country_id
+INNER JOIN rental r
+    ON c.customer_id = r.customer_id
+INNER JOIN payment p
+    ON r.rental_id = p.rental_id
+WHERE
+    co.country IN ('Switzerland', 'France', 'Germany')
+GROUP BY c.customer_id, c.last_name, c.email, co.country
+HAVING AVG(p.amount) > 3.0
+ORDER BY co.country, c.last_name;
+
+-- END Exercice 15
 
 -- BEGIN Exercice 16
 
@@ -344,6 +405,17 @@ WHERE p.amount <= 9;
 -- Résultat: 0
 
 -- END Exercice 16
+
+-- BEGIN Exercice 17
+
+UPDATE payment
+SET
+    amount = amount * 1.5,
+    payment_date = NOW()
+WHERE
+    amount > 4;
+
+-- END Exercice 17
 
 -- BEGIN Exercice 18
 
