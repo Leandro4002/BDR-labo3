@@ -1,4 +1,6 @@
--- BEGIN Exercice 1
+SET search_path = pagila;
+
+-- BEGIN Exercice 01
 
 SELECT
     customer_id,
@@ -9,9 +11,9 @@ WHERE first_name = 'PHYLLIS'
     AND store_id = 1
 ORDER BY customer_id ASC;
 
--- END Exercice 1
+-- END Exercice 01
 
--- BEGIN Exercice 2
+-- BEGIN Exercice 02
 
 SELECT
     title AS titre, release_year AS annee_sortie
@@ -19,9 +21,9 @@ FROM pagila.film
 WHERE length < 60 AND replacement_cost=12.99
 ORDER BY title;
 
--- END Exercice 2
+-- END Exercice 02
 
--- BEGIN Exercice 3
+-- BEGIN Exercice 03
 
 SELECT
     co.country,
@@ -36,9 +38,9 @@ WHERE co.country = 'France'
     OR (co.country_id >= 63 AND co.country_id <= 67)
 ORDER BY co.country, ci.city, a.postal_code;
 
--- END Exercice 3
+-- END Exercice 03
 
--- BEGIN Exercice 4
+-- BEGIN Exercice 04
 
 SELECT
     customer_id, first_name AS prenom, last_name AS nom
@@ -47,9 +49,9 @@ INNER JOIN pagila.address a ON c.address_id = a.address_id
 WHERE a.city_id = 117
 ORDER BY first_name;
 
--- END Exercice 4
+-- END Exercice 04
 
--- BEGIN Exercice 5
+-- BEGIN Exercice 05
 
 SELECT
     c1.first_name AS prenom_1,
@@ -70,9 +72,9 @@ INNER JOIN customer c2
 WHERE
     c1.customer_id != c2.customer_id;
 
--- END Exercice 5
+-- END Exercice 05
 
--- BEGIN Exercice 6
+-- BEGIN Exercice 06
 
 SELECT
     a.last_name AS nom, a.first_name AS prenom
@@ -99,9 +101,9 @@ WHERE a.first_name LIKE 'K%' OR a.last_name LIKE 'D%' AND a.actor_id IN (
         )
     );
 
--- END Exercice 6
+-- END Exercice 06
 
--- BEGIN Exercice 7
+-- BEGIN Exercice 07
 
 -- Version 1
 
@@ -139,9 +141,9 @@ WHERE
             i.film_id = f.film_id
     );
 
--- END Exercice 7
+-- END Exercice 07
 
--- BEGIN Exercice 8
+-- BEGIN Exercice 08
 
 -- (a)
 
@@ -214,9 +216,9 @@ WHERE
     AND r.return_date IS NULL
 ORDER BY last_name;
 
--- END Exercice 8
+-- END Exercice 08
 
--- BEGIN Exercice 9
+-- BEGIN Exercice 09
 
 SELECT
     c.customer_id,
@@ -254,7 +256,7 @@ WHERE
     );
 
 
--- END Exercice 9
+-- END Exercice 09
 
 -- BEGIN Exercice 11
 
