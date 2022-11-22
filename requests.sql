@@ -258,6 +258,17 @@ WHERE
 
 -- END Exercice 09
 
+-- BEGIN Exercice 10
+
+SELECT
+    f.title AS titre, COUNT(fa.actor_id) AS nb_acteurs
+FROM film f
+INNER JOIN film_actor fa on f.film_id = fa.film_id
+GROUP BY f.title
+ORDER BY f.title;
+
+-- END Exercice 10
+
 -- BEGIN Exercice 11
 
 
@@ -265,3 +276,68 @@ WHERE
 -- END Exercice 11
 
 -- BEGIN
+
+-- BEGIN Exercice 12
+
+SELECT
+    f.film_id AS id, f.title AS titre, f.length AS duree
+FROM film f
+WHERE f.length <= ALL (SELECT length FROM film);
+
+-- END Exercice 12
+
+-- BEGIN Exercice 14
+
+SELECT
+    SUM(f.length) / 60 / 8 AS nb_jours
+FROM film f;
+
+-- END Exercice 14
+
+-- BEGIN Exercice 16
+
+-- (a)
+SELECT
+    COUNT(*)
+FROM payment p
+WHERE p.amount <= 9;
+-- Résultat: 15678
+
+-- (b)
+DELETE FROM payment p WHERE p.amount <= 9;
+
+-- (c)
+SELECT
+    COUNT(*)
+FROM payment p
+WHERE p.amount <= 9;
+-- Résultat: 0
+
+-- END Exercice 16
+
+-- BEGIN Exercice 18
+
+-- (a)
+-- Ajout de la ville du client
+INSERT INTO city (city, country_id, last_update)
+VALUES ('Nyon', (SELECT country_id FROM country WHERE country = 'Switzerland'), CURRENT_DATE);
+
+-- Ajout de l'adresse du client
+INSERT INTO address (address, address2, district, city_id, postal_code, phone)
+VALUES ('Rue du Centre', NULL, 'Vaud', (SELECT city_id FROM city WHERE city = 'Nyon'), '1260', '021/360.00.00');
+
+-- Ajout du client
+INSERT INTO customer (store_id, first_name, last_name, email, address_id, active, create_date, last_update)
+VALUES (1, 'Guillaume', 'Ransome', 'gr@bluewin.ch', (SELECT MAX(address_id) FROM address), true, CURRENT_DATE, CURRENT_DATE);
+
+-- (b)
+-- Car c'est auto-incrémenté par SQL
+
+-- (c)
+
+
+-- (d)
+-- Vérification que le client exsite dans la DB
+SELECT * FROM customer where first_name = 'Guillaume';
+
+-- END Exercice 18
