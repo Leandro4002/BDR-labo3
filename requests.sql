@@ -9,16 +9,19 @@ SELECT
 FROM customer
 WHERE first_name = 'PHYLLIS'
     AND store_id = 1
-ORDER BY customer_id ASC;
+ORDER BY customer_id DESC;
 
 -- END Exercice 01
 
 -- BEGIN Exercice 02
 
 SELECT
-    title AS titre, release_year AS annee_sortie
-FROM pagila.film
-WHERE length < 60 AND replacement_cost=12.99
+    title AS titre,
+    release_year AS annee_sortie
+FROM film
+WHERE rating = 'R'
+    AND length < 60
+    AND replacement_cost=12.99
 ORDER BY title;
 
 -- END Exercice 02
@@ -35,18 +38,26 @@ FROM city ci
     INNER JOIN address a
         ON ci.city_id = a.city_id
 WHERE co.country = 'France'
-    OR (co.country_id >= 63 AND co.country_id <= 67)
-ORDER BY co.country, ci.city, a.postal_code;
+    OR (co.country_id >= 63
+    AND co.country_id <= 67)
+ORDER BY co.country,
+    ci.city,
+    a.postal_code;
 
 -- END Exercice 03
 
 -- BEGIN Exercice 04
 
 SELECT
-    customer_id, first_name AS prenom, last_name AS nom
-FROM pagila.customer c
-INNER JOIN pagila.address a ON c.address_id = a.address_id
-WHERE a.city_id = 117
+    customer_id,
+    first_name AS prenom,
+    last_name AS nom
+FROM customer c
+INNER JOIN address a
+    ON c.address_id = a.address_id
+WHERE c.active = true
+    AND a.city_id = 171
+    AND c.store_id = 1
 ORDER BY first_name;
 
 -- END Exercice 04
@@ -76,25 +87,26 @@ WHERE
 
 -- BEGIN Exercice 06
 
-SELECT
-    a.last_name AS nom, a.first_name AS prenom
-FROM pagila.actor a
+SELECT DISTINCT
+    a.last_name AS nom,
+    a.first_name AS prenom
+FROM actor a
 WHERE a.first_name LIKE 'K%' OR a.last_name LIKE 'D%' AND a.actor_id IN (
     SELECT
         fa.actor_id
-    FROM pagila.film_actor fa
+    FROM film_actor fa
     WHERE fa.film_id IN (
         SELECT
             f.film_id
-        FROM pagila.film f
+        FROM film f
         WHERE f.film_id IN (
             SELECT
                 fc.film_id
-            FROM pagila.film_category fc
+            FROM film_category fc
             WHERE fc.category_id IN (
                 SELECT
                     category_id
-                FROM pagila.category c
+                FROM category c
                 WHERE name = 'Horror'
                 )
             )
@@ -165,10 +177,10 @@ WHERE EXISTS
             WHERE co.country_id = c.country_id AND co.country = 'Spain'
             )
         )
-)
-AND EXISTS
-(SELECT r.customer_id FROM rental r WHERE cu.customer_id = r.customer_id AND r.return_date IS NULL)
-ORDER BY last_name;
+    )
+    AND EXISTS
+    (SELECT r.customer_id FROM rental r WHERE cu.customer_id = r.customer_id AND r.return_date IS NULL)
+    ORDER BY last_name;
 
 -- (b)
 SELECT
@@ -260,33 +272,39 @@ WHERE
 
 -- BEGIN Exercice 10
 
+-- TODO Lire la question wallah
 SELECT
-    f.title AS titre, COUNT(fa.actor_id) AS nb_acteurs
+    f.title AS titre,
+    COUNT(fa.actor_id) AS nb_acteurs
 FROM film f
 INNER JOIN film_actor fa on f.film_id = fa.film_id
 GROUP BY f.title
-ORDER BY f.title;
+HAVING COUNT(fa.actor_id) > 5
+ORDER BY nb_acteurs DESC;
 
 -- END Exercice 10
 
 -- BEGIN Exercice 11
 
 SELECT
-    c.category_id as id,
-    c.name as nom,
-    COUNT(fc.film_id) as nb_films
+    c.category_id AS id,
+    c.name AS nom,
+    COUNT(fc.film_id) AS nb_films
 FROM category c
 INNER JOIN film_category fc
     ON c.category_id = fc.category_id
 GROUP BY c.category_id
-HAVING COUNT(fc.film_id) > 65;
+HAVING COUNT(fc.film_id) > 65
+ORDER BY COUNT(fc.film_id);
 
 -- END Exercice 11
 
 -- BEGIN Exercice 12
 
 SELECT
-    f.film_id AS id, f.title AS titre, f.length AS duree
+    f.film_id AS id,
+    f.title AS titre,
+    f.length AS duree
 FROM film f
 WHERE f.length <= ALL (SELECT length FROM film);
 
@@ -342,14 +360,11 @@ VALUES ('Rue du Centre', NULL, 'Vaud', (SELECT city_id FROM city WHERE city = 'N
 INSERT INTO customer (store_id, first_name, last_name, email, address_id, active, create_date, last_update)
 VALUES (1, 'Guillaume', 'Ransome', 'gr@bluewin.ch', (SELECT MAX(address_id) FROM address), true, CURRENT_DATE, CURRENT_DATE);
 
--- (b)
--- Car c'est auto-incrémenté par SQL
-
 -- (c)
-
+SELECT MAX(city_id) FROM city;
+SELECT MAX(address_id) FROM address;
 
 -- (d)
--- Vérification que le client exsite dans la DB
-SELECT * FROM customer where first_name = 'Guillaume';
+SELECT * FROM customer WHERE first_name = 'Guillaume' AND last_name = 'Ransome';
 
 -- END Exercice 18
