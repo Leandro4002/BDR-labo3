@@ -152,7 +152,7 @@ SELECT
     cu.customer_id AS id,
     cu.last_name AS nom,
     cu.first_name AS prenom
-FROM pagila.customer cu
+FROM customer cu
 WHERE EXISTS
     (
     SELECT a.address_id
@@ -178,19 +178,19 @@ SELECT
     customer_id AS id,
     last_name AS nom,
     first_name AS prenom
-FROM pagila.customer cu
+FROM customer cu
 WHERE cu.address_id IN (
     SELECT
         a.address_id
-    FROM pagila.address a
+    FROM address a
     WHERE a.city_id IN (
         SELECT
             ci.city_id
-        FROM pagila.city ci
+        FROM city ci
         WHERE ci.country_id = (
             SELECT
                 co.country_id
-            FROM pagila.country co
+            FROM country co
             WHERE country='Spain'
             )
         )
@@ -210,7 +210,7 @@ SELECT
     cu.customer_id AS id,
     cu.last_name AS nom,
     cu.first_name AS prenom
-FROM pagila.customer cu
+FROM customer cu
 INNER JOIN address a on cu.address_id = a.address_id
 INNER JOIN city c on a.city_id = c.city_id
 INNER JOIN country co on co.country_id = c.country_id
