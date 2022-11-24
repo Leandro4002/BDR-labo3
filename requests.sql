@@ -261,14 +261,17 @@ WHERE
 
 
 -- BEGIN Exercice 10
--- TODO Lire la question wallah
 SELECT
     f.title AS titre,
     COUNT(fa.actor_id) AS nb_acteurs
 FROM film f
 INNER JOIN film_actor fa on f.film_id = fa.film_id
+INNER JOIN film_category fc on f.film_id = fc.film_id
+INNER JOIN category c on fc.category_id = c.category_id
+WHERE
+    c.name = 'Drama'
 GROUP BY f.title
-HAVING COUNT(fa.actor_id) > 5
+HAVING COUNT(fa.actor_id) < 5
 ORDER BY nb_acteurs DESC;
 -- END Exercice 10
 
